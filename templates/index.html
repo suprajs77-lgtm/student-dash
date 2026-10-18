@@ -1,0 +1,171 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FocusFlow | Student Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="app-shell">
+    <aside class="sidebar">
+        <a class="brand" href="/">
+            <span class="brand-icon">✳</span>
+            <span>focus<span class="brand-light">flow</span></span>
+        </a>
+
+        <p class="nav-label">WORKSPACE</p>
+        <button class="nav-item active" data-filter="all">▦ <span>Overview</span></button>
+        <button class="nav-item" data-filter="pending">◷ <span>My tasks</span></button>
+        <button class="nav-item" data-filter="completed">✓ <span>Completed</span></button>
+        <button class="nav-item" data-filter="overdue">⚑ <span>Overdue</span></button>
+
+        <div class="sidebar-bottom">
+            <div class="tip-card">
+                <div class="tip-icon">✦</div>
+                <strong>Stay focused</strong>
+                <p>Small steps every day lead to big results.</p>
+            </div>
+            <div class="profile">
+                <div class="avatar">S</div>
+                <div>
+                    <strong>Student</strong>
+                    <small>Personal workspace</small>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div>
+                <div class="eyebrow">YOUR WORKSPACE</div>
+                <h1>Good to see you <span class="wave">✦</span></h1>
+                <p class="muted">Make today count. One task at a time.</p>
+            </div>
+            <button class="primary-btn" id="openForm">＋ New task</button>
+        </header>
+
+        <section class="stats-grid">
+            <article class="stat-card">
+                <div class="stat-top"><span>Total tasks</span><span class="stat-icon purple">▤</span></div>
+                <div class="stat-number" id="totalStat">0</div>
+                <div class="stat-foot">All your tasks</div>
+            </article>
+            <article class="stat-card">
+                <div class="stat-top"><span>Completed</span><span class="stat-icon green">✓</span></div>
+                <div class="stat-number" id="completedStat">0</div>
+                <div class="stat-foot">Tasks finished</div>
+            </article>
+            <article class="stat-card">
+                <div class="stat-top"><span>In progress</span><span class="stat-icon blue">◷</span></div>
+                <div class="stat-number" id="pendingStat">0</div>
+                <div class="stat-foot">Still on your list</div>
+            </article>
+            <article class="stat-card">
+                <div class="stat-top"><span>Overdue</span><span class="stat-icon orange">⚑</span></div>
+                <div class="stat-number" id="overdueStat">0</div>
+                <div class="stat-foot">Past their due date</div>
+            </article>
+        </section>
+
+        <section class="progress-panel">
+            <div>
+                <div class="section-kicker">YOUR PROGRESS</div>
+                <h2>Keep up the momentum</h2>
+                <p class="muted">Every completed task moves you forward.</p>
+            </div>
+            <div class="progress-right">
+                <strong id="progressPercent">0%</strong>
+                <div class="progress-track"><div id="progressBar"></div></div>
+                <small id="progressLabel">No tasks completed yet</small>
+            </div>
+        </section>
+
+        <section class="task-panel">
+            <div class="task-heading">
+                <div>
+                    <div class="section-kicker">YOUR PLANNER</div>
+                    <h2>My tasks <span class="count-pill" id="taskCount">0</span></h2>
+                </div>
+                <div class="search-wrap">
+                    <span>⌕</span>
+                    <input id="searchInput" type="search" placeholder="Search tasks...">
+                </div>
+            </div>
+
+            <div class="filters">
+                <button class="filter-btn selected" data-filter="all">All tasks</button>
+                <button class="filter-btn" data-filter="pending">Pending</button>
+                <button class="filter-btn" data-filter="completed">Completed</button>
+                <select id="priorityFilter" aria-label="Filter by priority">
+                    <option value="all">All priorities</option>
+                    <option value="High">High priority</option>
+                    <option value="Medium">Medium priority</option>
+                    <option value="Low">Low priority</option>
+                </select>
+            </div>
+
+            <div id="taskList" class="task-list">
+                <div class="loading">Loading your tasks...</div>
+            </div>
+            <div id="toast" class="toast" role="status"></div>
+        </section>
+
+        <footer>FocusFlow <span>·</span> Built for better study habits</footer>
+    </main>
+</div>
+
+<div class="modal-backdrop" id="modal">
+    <form class="task-form" id="taskForm">
+        <div class="modal-header">
+            <div>
+                <div class="section-kicker">TASK PLANNER</div>
+                <h2 id="formTitle">Create a task</h2>
+            </div>
+            <button type="button" class="close-btn" id="closeForm" aria-label="Close">×</button>
+        </div>
+
+        <label for="title">Task title *</label>
+        <input id="title" name="title" maxlength="150" placeholder="e.g. Complete DBMS assignment" required>
+
+        <label for="description">Description</label>
+        <textarea id="description" name="description" rows="3" maxlength="1000" placeholder="Add a few details..."></textarea>
+
+        <div class="form-row">
+            <div>
+                <label for="category">Category</label>
+                <select id="category" name="category">
+                    <option>Study</option>
+                    <option>Assignment</option>
+                    <option>Project</option>
+                    <option>Personal</option>
+                    <option>Exam preparation</option>
+                </select>
+            </div>
+            <div>
+                <label for="priority">Priority</label>
+                <select id="priority" name="priority">
+                    <option>Low</option>
+                    <option selected>Medium</option>
+                    <option>High</option>
+                </select>
+            </div>
+        </div>
+
+        <label for="due_date">Due date</label>
+        <input id="due_date" name="due_date" type="date">
+
+        <div class="form-actions">
+            <button type="button" class="secondary-btn" id="cancelForm">Cancel</button>
+            <button type="submit" class="primary-btn" id="saveButton">Create task</button>
+        </div>
+    </form>
+</div>
+
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
